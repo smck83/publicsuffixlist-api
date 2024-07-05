@@ -116,6 +116,7 @@ def checkDomain(domain):
         output["parentDomain"] = remove_first_part(domain)
         output["isTld"] =  domain in pslData
         output["tldDomain"] =  returnPSL(domain)
+        output["manuallyAdded"] = returnPSL(domain) in manual_add
         if output["isTld"] == False:
             output["orgLevelDomain"] =  returnOrgLevelDomain(domain)
             output["isOrgLevel"] = remove_first_part(domain) in pslData and domain != returnPSL(domain)
