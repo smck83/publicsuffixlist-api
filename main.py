@@ -2,7 +2,7 @@ from fastapi import FastAPI
 import os
 import re
 app = FastAPI()
-
+domain = None
 output = {
 }
 invalidSuffix = 0
@@ -89,18 +89,18 @@ def returnPSL(domain):
             domain = remove_first_part(domain)
             count+=1
         if count == 50:
-            return invalidSuffix
+            return "invalidSuffix"
         else:
             return domain
 
 def returnOrgLevelDomain(domain):
         count = 0
         countLimit = 50
-        while (domain != returnPSL(domain) and remove_first_part(domain) not in pslData and count < countLimit):
+        while (returnPSL(domain) in pslData and remove_first_part(domain) not in pslData and count < countLimit):
             count+=1
             domain = remove_first_part(domain)
-        if count == countLimit:
-            domain = invalidSuffix
+        if count == countLimit or returnPSL(domain) not in pslData:
+            return "invalidSuffix"
         else:
             return domain
 
@@ -117,7 +117,7 @@ def checkDomain(domain):
         output["isTld"] =  domain in pslData
         output["tldDomain"] =  returnPSL(domain)
         output["manuallyAdded"] = returnPSL(domain) in manual_add
-        if output["isTld"] == False:
+        if output["isTld"] == False and domain:
             output["orgLevelDomain"] =  returnOrgLevelDomain(domain)
             output["isOrgLevel"] = remove_first_part(domain) in pslData and domain != returnPSL(domain)
         else:
@@ -129,9 +129,9 @@ def checkDomain(domain):
             output["comment"] = "unknown"
         return output
         #return '.'.join(parts[1:])
-    else:
+    #else:
         # If the domain doesn't have a dot, return it as is
-        return "invalidSuffix"
+        #return "invalidSuffix"
 
 
 #print(returnOrgLevelDomain("com.au"))
