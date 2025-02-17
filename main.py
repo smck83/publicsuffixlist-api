@@ -35,10 +35,16 @@ def import_psl_to_list(file_path):
 
 #print(detect_encoding('public_suffix_list.dat'))
 pslData = import_psl_to_list('./public_suffix_list.dat')
+try:
+    version_line = (next((line for line in pslData if line.startswith("// VERSION:")), None)).split(":")[1].strip()
+    commit_line = (next((line for line in pslData if line.startswith("// COMMIT:")), None)).split(":")[1].strip()
+except:
+    version_line = "Unknown"
+    commit_line = "Unknown"
 pslData.append ("")
 pslData.append ("// Manually added TLD")
 pslData = pslData + manual_add
-
+print(f"VERSION: {version_line} and COMMIT: {commit_line}")
 
 def parse_data(data):
     domain_dict = {}
@@ -114,7 +120,11 @@ def checkDomain(domain):
     # Check if there are enough parts to remove the first one
     if len(parts) > 0 and invalidSuffix == 0:
         # Join the parts excluding the first one
-        output = {}
+        output = {
+                    "commit": commit_line,
+                    "tldVersion": version_line,
+                    "manuallyAdded": len(manual_add) > 0
+        }
         output["sourceDomain"] = domain
         output["parentDomain"] = remove_first_part(domain)
         output["isTld"] =  domain in pslData
