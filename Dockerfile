@@ -14,6 +14,8 @@ WORKDIR ${MY_APP_PATH}
 
 VOLUME [${MY_APP_PATH}]
 
-ENTRYPOINT /usr/bin/python3 -u run.py
+#ENTRYPOINT /usr/bin/python3 -u run.py
+
+ENTRYPOINT ["/usr/bin/python3", "-u", "run.py"]
 
 EXPOSE 8000/tcp

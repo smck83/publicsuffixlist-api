@@ -36,7 +36,7 @@ def import_psl_to_list(file_path):
 #print(detect_encoding('public_suffix_list.dat'))
 pslData = import_psl_to_list('./public_suffix_list.dat')
 pslData.append ("")
-pslData.append ("// Manually added")
+pslData.append ("// Manually added TLD")
 pslData = pslData + manual_add
 
 
