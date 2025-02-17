@@ -101,6 +101,8 @@ def returnOrgLevelDomain(domain):
             domain = remove_first_part(domain)
         if count == countLimit or returnPSL(domain) not in pslData:
             return "invalidSuffix"
+        elif domain in pslData:
+            return "isTLD"
         else:
             return domain
 
@@ -112,17 +114,24 @@ def checkDomain(domain):
     # Check if there are enough parts to remove the first one
     if len(parts) > 0 and invalidSuffix == 0:
         # Join the parts excluding the first one
+        output = {}
         output["sourceDomain"] = domain
         output["parentDomain"] = remove_first_part(domain)
         output["isTld"] =  domain in pslData
         output["tldDomain"] =  returnPSL(domain)
         output["manuallyAdded"] = returnPSL(domain) in manual_add
-        if output["isTld"] == False and domain:
+        #output["orgLevelDomain"] =  None
+        #if domain in returnOrgLevelDomain(domain):
+        # print(f"line123: {domain} in {returnOrgLevelDomain(domain)} {domain in returnOrgLevelDomain(domain)}")
+        if returnOrgLevelDomain(domain) != "isTLD" and domain not in pslData :
+
             output["orgLevelDomain"] =  returnOrgLevelDomain(domain)
-            output["isOrgLevel"] = remove_first_part(domain) in pslData and domain != returnPSL(domain)
+        if output["isTld"] == False and domain:
+            
+            output["isOrgLevel"] = remove_first_part(domain) in pslData# and domain != returnPSL(domain)
         else:
             output["isOrgLevel"] = False
-
+        
         try:
             output["comment"] = domain_dict[returnPSL(domain)]
         except:
